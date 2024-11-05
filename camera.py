@@ -33,5 +33,10 @@ class camera :
         p=np.dot(self.matrice_des_paramètres_intrinsèques, self.matrice_des_paramètres_extrinsiques)
  
         return p
-       
+    def project_points_3d(self):
+      
+        points = np.array(self.mash.vertices)
+        points_3d = np.hstack((points, np.ones((points.shape[0], 1))))
+        points_2d= np.dot(self.projection_matrix, points_3d.T).T
+        return points_2d[:, :2] / points_2d[:, 2, np.newaxis] 
     
