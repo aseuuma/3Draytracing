@@ -21,8 +21,28 @@ Camera = camera(
 )
 
 
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
+ 
+    screen.fill((0, 0, 0))
 
+ 
+    projected_points = Camera.project_points_3d()
+
+    for face in mesh_object.faces:
+        for i in range(len(face)):
+            start_vertex = projected_points[face[i]]
+            end_vertex = projected_points[face[(i + 1) % len(face)]]
+            # Draw lines between the projected points
+            pygame.draw.line(screen, (255, 255, 255), start_vertex.astype(int), end_vertex.astype(int), 1)
+
+    pygame.display.flip()
+
+pygame.quit()
 
 
 
