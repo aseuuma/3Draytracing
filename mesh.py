@@ -14,8 +14,8 @@ class Mesh:
                     vertex = list(map(float, line.strip().split()[1:4]))
                     self.vertices.append(vertex)
                 elif line.startswith("f "):
-                    face = line.strip().split()[1:]  # Skip the 'f' part
-                    vertex_indices = [int(v.split('/')[0]) - 1 for v in face]  # Convert to zero-based index
+                    face = line.strip().split()[1:] 
+                    vertex_indices = [int(v.split('/')[0]) - 1 for v in face] 
                     self.faces.append(vertex_indices)
                 elif line.startswith("vt "):
                     vertex = list(map(float, line.strip().split()[1:4]))
