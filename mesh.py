@@ -1,24 +1,25 @@
-class mesh :
+import numpy as np
+class Mesh:
     def __init__(self, filename):
         self.filename = filename
         self.vertices = []
         self.faces = []
-        self.Vertex_Texture =[]
-        self.Vertex_Normal = []
-    def open_3Dobject (self):
+        self.VN = []
+        self.VT=[]
+    
+    def open_3D_object(self):
         with open(self.filename) as file:
             for line in file:
                 if line.startswith("v "):
                     vertex = list(map(float, line.strip().split()[1:4]))
                     self.vertices.append(vertex)
                 elif line.startswith("f "):
-                    vertex = list(map(float, line.strip().split()[1:4]))
-                    self.faces.append(vertex) 
+                    face = line.strip().split()[1:]  # Skip the 'f' part
+                    vertex_indices = [int(v.split('/')[0]) - 1 for v in face]  # Convert to zero-based index
+                    self.faces.append(vertex_indices)
                 elif line.startswith("vt "):
                     vertex = list(map(float, line.strip().split()[1:4]))
-                    self.Vertex_Texture.append(vertex)
+                    self.VT.append(vertex)
                 elif line.startswith("vn "):
                     vertex = list(map(float, line.strip().split()[1:4]))
-                    self.Vertex_Texture.append(vertex)
-
-        return  
+                    self.VN.append(vertex)
