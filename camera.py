@@ -40,9 +40,19 @@ class Camera :
         return np.dot(self.intrinsic_matrix, self.extrinsic_matrix)
 
    
-    def project_points_3d(self):
+    def project_avec_rotation(self):
       
         points = np.array(self.mesh.vertices)
         points_3d = np.hstack((points, np.ones((points.shape[0], 1))))
         points_2d= np.dot(self.projection_matrix, points_3d.T).T
         return points_2d[:, :2] / points_2d[:, 2, np.newaxis]
+    def project_points_3d(self):
+        points = np.array(self.mesh.vertices)
+
+        points[:, 2] += self.translation_vector[2] 
+        projected_points = points[:, :2] / points[:, 2, np.newaxis] #مقسمة على Z هنا
+
+        projected_points[:, 0] = projected_points[:, 0] *self.alpha *self.focal_length + self.principal_point[0]
+        projected_points[:, 1] = projected_points[:, 1] * self.beta *self.focal_length + self.principal_point[1]
+
+        return projected_points
