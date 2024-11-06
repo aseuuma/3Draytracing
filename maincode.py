@@ -6,7 +6,7 @@ from camera import Camera
 pygame.init()
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("3D Object Projection")
+pygame.display.set_caption("3D Raytracing")
 
 
 file_path = 'CUBEE.obj'  
