@@ -33,7 +33,7 @@ while running:
   
     screen.fill((0, 0, 0))
 
-    projected_points = camera.project_points_3d()
+    projected_points = camera.project_avec_rotation()
 
     for face in mesh_object.faces:
         for i in range(len(face)):
