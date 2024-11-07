@@ -37,8 +37,9 @@ class Camera :
         return np.hstack((self.rotation_matrix, self.translation_vector))
 
     def compute_projection_matrix(self):
+        return np.dot(self.intrinsic_matrix, self.extrinsic_matrix)   
+    def compute_projecti_matrix(self):
         return np.dot(self.intrinsic_matrix, self.extrinsic_matrix)
-
    
     def project_avec_rotation(self):
       
