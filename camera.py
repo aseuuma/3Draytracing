@@ -8,7 +8,7 @@ class Camera :
         self.alpha = alpha
         self.beta = beta
         self.principal_point = np.array(principal_point)
-        
+        self.aspect_ratio = screen_width / screen_height
        
         self.rotation_matrix = np.array(rotation_matrix)
         self.translation_vector = np.array(translation_vector).reshape(-1, 1)
@@ -56,3 +56,14 @@ class Camera :
         projected_points[:, 1] = projected_points[:, 1] * self.beta *self.focal_length + self.principal_point[1]
 
         return projected_points
+     def generate_ray(self, pixel_x, pixel_y):
+        # Convert pixel coordinates to normalized device coordinates
+        ndc_x = (pixel_x + 0.5) / self.screen_width * 2 - 1
+        ndc_y = 1 - (pixel_y + 0.5) / self.screen_height * 2
+        ndc_y /= self.aspect_ratio
+
+        # Ray direction in camera space
+        ray_direction = np.array([ndc_x, ndc_y, -self.focal_length])
+        ray_direction /= np.linalg.norm(ray_direction)
+        ray_origin = np.array([0, 0, 0])
+        return ray_origin, ray_direction
