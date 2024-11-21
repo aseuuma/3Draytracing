@@ -1,4 +1,4 @@
-sphere_vertices, sphere_faces = Mesh.open_3D_object('BALL.obj')import pygame
+import pygame
 import numpy as np
 from mesh import Mesh
 from camera import Camera
@@ -14,7 +14,8 @@ beta = 1    # for y-axis
 u0, v0 = width // 2, height // 2    # center of projection
 
 mesh_object = Mesh('eyeball.obj')
-sphere_vertices, sphere_faces = mesh_object.open_3D_object('BALL.obj')
+sphere_vertices, sphere_faces = mesh_object.open_3D_object('eyeball.obj')
+
 camera = Camera(
     focal_length=f_length,
     alpha=alpha,
@@ -86,12 +87,12 @@ while running:
 
             t = Intersections(camera_position, direction_ray, centre_sphere, radius_sphere)
             if t is not None:
-                print(t)
+                #print(t)
                 # Colorer le pixel
                 # screen.set_at((x,y), (255, 0, 255))
                 depth_color = int(255 - min(t, 255))
                 color = (depth_color, depth_color, 0) 
-                print(color)
+                #print(color)
                 screen.set_at((x, y), color)
                 colored_pixels.add((x, y))
 
