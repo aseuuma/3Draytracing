@@ -14,8 +14,8 @@ alpha = 1   # for x-axis
 beta = 1    # for y-axis
 u0, v0 = width // 2, height // 2    # center of projection
 
-mesh_object = Mesh('BALL.obj')
-sphere_vertices, sphere_faces = mesh_object.open_3D_object('BALL.obj')
+mesh_object = Mesh('eyeball.obj')
+sphere_vertices, sphere_faces = mesh_object.open_3D_object('eyeball.obj')
 
 camera = Camera(
     focal_length=f_length,

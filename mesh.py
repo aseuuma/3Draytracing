@@ -14,14 +14,14 @@ class Mesh:
                 if line.startswith('v '):
                     # Read vertex positions
                     parts = line.strip().split()
-                    print(parts)
+                  #  print(parts)
                     vertices.append([float(parts[1]), float(parts[2]), float(parts[3])])
                 elif line.startswith('f '):
                     # Read face definitions
                     parts = line.strip().split()
-                    print(parts)
+                  #  print(parts)
                     face = [int(p.split('/')[0]) - 1 for p in parts[1:]]
-                    print(face)
+                  #  print(face)
                     faces.append(face)
 
         return np.array(vertices), faces
