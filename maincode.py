@@ -27,7 +27,7 @@ centre_sphere = np.mean(sphere_vertices, axis = 0)
 # La distance entre le centre et tous les points de sphere
 distances = np.linalg.norm(sphere_vertices - centre_sphere, axis=1)
 radius_sphere = np.mean(distances)
-print(radius_sphere)
+#print(radius_sphere)
 # Scene setup
 spheres = [
     Sphere(center=[0, 0, -5], radius=radius_sphere, color=[255, 255, 0]),
