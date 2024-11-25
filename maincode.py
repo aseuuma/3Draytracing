@@ -6,6 +6,7 @@ from camera import Camera
 pygame.init()
 width, height = 600, 500
 screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("3D Raytracing ")
 clock = pygame.time.Clock()
 
 f_length = 400    # focal length (f)
@@ -13,8 +14,8 @@ alpha = 1   # for x-axis
 beta = 1    # for y-axis
 u0, v0 = width // 2, height // 2    # center of projection
 
-mesh_object = Mesh('eyeball.obj')
-sphere_vertices, sphere_faces = mesh_object.open_3D_object('eyeball.obj')
+mesh_object = Mesh('BALL.obj')
+sphere_vertices, sphere_faces = mesh_object.open_3D_object('BALL.obj')
 
 camera = Camera(
     focal_length=f_length,
