@@ -2,104 +2,69 @@ import pygame
 import numpy as np
 from mesh import Mesh
 from camera import Camera
+from light import Light
+from sphere import Sphere
 # Pygame setup
 pygame.init()
-width, height = 600, 500
-screen = pygame.display.set_mode((width, height))
+screen_width, screen_height = 600, 500
+screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("3D Raytracing ")
 clock = pygame.time.Clock()
 
 f_length = 400    # focal length (f)
 alpha = 1   # for x-axis
 beta = 1    # for y-axis
-u0, v0 = width // 2, height // 2    # center of projection
+u0, v0 = screen_width // 2, screen_height // 2    # center of projection
 
+
+# Initialize the camera
+focal_length = 1
 mesh_object = Mesh('eyeball.obj')
 sphere_vertices, sphere_faces = mesh_object.open_3D_object('eyeball.obj')
-
-camera = Camera(
-    focal_length=f_length,
-    alpha=alpha,
-    beta=beta,
-    principal_point=(width / 2, height / 2 , 2),
-    rotation_matrix=[[0.36, 0.48, -0.8], [-0.8, 0.6, 0.0], [0.48, 0.64, 0.6]], 
-    translation_vector=np.array([0, 0, -10]),  
-    mesh=mesh_object,
-    width=width,
-    height=height
-)
-# Translate the vertices along z_axis
-sphere_vertices = sphere_vertices * 100 + np.array([0, 0, 300])
-
-# Define the camera position in 3D space
-camera_position = camera.principal_point  # Camera at origin
+sphere_vertices = sphere_vertices  + np.array([0, 0, 300])
+camera = Camera(focal_length, screen_width, screen_height , 400 , 400 , focal_length)
 centre_sphere = np.mean(sphere_vertices, axis = 0)
 # La distance entre le centre et tous les points de sphere
 distances = np.linalg.norm(sphere_vertices - centre_sphere, axis=1)
 radius_sphere = np.mean(distances)
+print(radius_sphere)
+# Scene setup
+spheres = [
+    Sphere(center=[0, 0, -5], radius=radius_sphere, color=[255, 255, 0]),
+]
+light = Light(position=[5, 10, -5], intensity=1.0)
 
+ambient_light = 0.1  # Ambient light intensity
 
+# Rendering loop
+for y in range(screen_height):
+    for x in range(screen_width):
+        ray_origin, ray_direction = camera.generate_ray(x, y)
 
-def Intersections(origin_ray, direction_ray, centre_sphere, radius_sphere):
-    o_c = origin_ray - centre_sphere
-    # From the quadratic equation we found:
-    a = np.dot(direction_ray, direction_ray)
-    b = 2 * np.dot(o_c , direction_ray)
-    c = np.dot(o_c , o_c) - radius_sphere**2
+        closest_t = 100
+        closest_color = np.array([0, 0, 0])
 
-    # Calcule de Delta
-    delta = b**2 - 4 * a * c
+        for sphere in spheres:
+            t = sphere.Intersections(ray_origin, ray_direction)
+            if t and t < closest_t:
+                normal = sphere.normal(ray_origin, ray_direction)
+                if normal is None:  # Skip if no valid normal
+                    continue
+                closest_t = t
+                intersection_point = ray_origin + t * ray_direction
 
-    # Calculer les solutions qui sont les intersection avec l'objet sphere
-    if delta < 0:
-        return None
-    else:
-        t_1 = (-b + np.sqrt(delta)) / (2 * a)
-        t_2 = (-b - np.sqrt(delta)) / (2 * a)
-        positive_ts = []
-        if t_1 > 0:
-            positive_ts.append(t_1)
-        if t_2 > 0:
-            positive_ts.append(t_2)
-        if positive_ts:
-            return min(positive_ts)
+                # Calculate light direction
+                light_direction = light.position - intersection_point
+                light_direction /= np.linalg.norm(light_direction)
 
-        return None
+                # Diffuse lighting calculation
+                diffuse = light.model_lambert_lightning(normal, light_direction)
 
-colored_pixels = set()
+                # Combine ambient and diffuse lighting
+                color = ambient_light * sphere.color + diffuse * sphere.color
+                closest_color = np.clip(color, 0, 255)
 
-# Main loop
-running = True
-while running:
-    # screen.fill((85,0,102))
-    screen.fill((255, 255, 255))
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        # Set pixel color
+        screen.set_at((x, y), tuple(closest_color.astype(int)))
 
-    for y in range(width):
-        for x in range(height):
-            # Pour eviter de recolorer les pixels 2 fois
-            if (x, y) in colored_pixels:
-                continue
-            position_point =np.array([x - u0, y - v0, f_length])
-            direction_ray = position_point - camera_position
-            direction_ray = direction_ray / np.linalg.norm(direction_ray)  # Normalize
-
-            t = Intersections(camera_position, direction_ray, centre_sphere, radius_sphere)
-            if t is not None:
-                #print(t)
-                # Colorer le pixel
-                # screen.set_at((x,y), (255, 0, 255))
-                depth_color = int(255 - min(t, 255))
-                color = (depth_color, depth_color, 0) 
-                #print(color)
-                screen.set_at((x, y), color)
-                colored_pixels.add((x, y))
-
-                pygame.display.update()
-
-
-    # pygame.display.flip()
-    clock.tick(30)
-pygame.quit()
+    pygame.display.flip()
