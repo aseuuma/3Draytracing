@@ -4,6 +4,7 @@ from mesh import Mesh
 from camera import Camera
 from light import Light
 from sphere import Sphere
+from floor import Floor
 # Pygame setup
 pygame.init()
 screen_width, screen_height = 600, 500
@@ -35,6 +36,7 @@ spheres = [
 light = Light(position=[5, 10, -5], intensity=1.0)
 
 ambient_light = 0.1  # Ambient light intensity
+floor = Floor(y=-2, color=[100, 100, 100])  # Gray floor at y = -2
 
 # Rendering loop
 for y in range(screen_height):
@@ -65,7 +67,19 @@ for y in range(screen_height):
                 # Combine ambient and diffuse lighting
                 color = ambient_light * sphere.color + diffuse * sphere.color + shiness * np.array([255, 255, 255])
                 closest_color = np.clip(color, 0, 255)
+        t = floor.Intersections(ray_origin, ray_direction)
+        if t and t < closest_t:
+            closest_t = t
+            intersection_point = ray_origin + t * ray_direction
 
+            # Calculate light direction
+            light_direction = light.position - intersection_point
+            light_direction /= np.linalg.norm(light_direction)
+
+            diffuse = light.model_lambert_lightning(floor.normal(), light_direction)
+            color = ambient_light * floor.color + diffuse * floor.color
+
+            closest_color = np.clip(color, 0, 255)
         # Set pixel color
         screen.set_at((x, y), tuple(closest_color.astype(int)))
 
