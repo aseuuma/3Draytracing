@@ -29,9 +29,13 @@ centre_sphere = np.mean(sphere_vertices, axis = 0)
 distances = np.linalg.norm(sphere_vertices - centre_sphere, axis=1)
 radius_sphere = np.mean(distances)
 #print(radius_sphere)
+scaling_factor = 0.5  # Adjust this value to control the sphere size
+small_radius = radius_sphere * scaling_factor
 # Scene setup
 spheres = [
-    Sphere(center=[0, 0, -5], radius=radius_sphere, color=[255, 255, 0]),
+    Sphere(center=[-2, -1, -6], radius=small_radius, color=[255, 0, 255]),
+    Sphere(center=[0, -1, -5], radius=small_radius, color=[255, 255, 0]),
+    Sphere(center=[2, 0, -6], radius=radius_sphere, color=[255, 0, 0]),
 ]
 light = Light(position=[5, 10, -5], intensity=1.0)
 
