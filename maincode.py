@@ -56,15 +56,27 @@ for y in range(screen_height):
                 # Calculate light direction
                 light_direction = light.position - intersection_point
                 light_direction /= np.linalg.norm(light_direction)
-
+                view_direction = -ray_direction
                 # Diffuse lighting calculation
                 diffuse = light.model_lambert_lightning(normal, light_direction)
-
+                sh = 32
+                shiness = light.model_phong_specular(normal, light_direction, view_direction, sh)
+                   
                 # Combine ambient and diffuse lighting
-                color = ambient_light * sphere.color + diffuse * sphere.color
+                color = ambient_light * sphere.color + diffuse * sphere.color + shiness * np.array([255, 255, 255])
                 closest_color = np.clip(color, 0, 255)
 
         # Set pixel color
         screen.set_at((x, y), tuple(closest_color.astype(int)))
 
     pygame.display.flip()
+  
+
+# Add an event loop to keep the window open
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+pygame.quit()
