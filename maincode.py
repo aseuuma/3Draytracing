@@ -55,7 +55,7 @@ def shadow(intersection_point, light_direction, spheres, current_sphere):
 
 
 
-floor = Floor(y=-2, color=[100, 100, 100])  # Gray floor at y = -2
+floor = Floor(y=-2, color=[100, 255, 100])  # Gray floor at y = -2
 
 
 for y in range(screen_height):
